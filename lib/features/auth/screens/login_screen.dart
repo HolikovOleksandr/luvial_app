@@ -69,6 +69,7 @@ class LoginScreen extends StatelessWidget {
                 },
                 child: const Text('Login'),
               ),
+              Spacer(),
               TextButton(
                 onPressed: () => context.go(RegisterScreen.route),
                 child: Text('Create Account'),
@@ -89,6 +90,6 @@ class LoginScreen extends StatelessWidget {
   _authSuccess(BuildContext context) {
     ScaffoldMessenger.of(
       context,
-    ).showSnackBar(const SnackBar(content: Text('Registration successful!')));
+    ).showSnackBar(const SnackBar(content: Text('Login successful!')));
   }
 }

@@ -13,6 +13,8 @@ final class AuthLoggedIn extends AuthEvent {
 
 final class AuthLoggedOut extends AuthEvent {}
 
+final class AuthGoogleLoginRequested extends AuthEvent {}
+
 final class AuthRegisterRequested extends AuthEvent {
   final String email;
   final String password;

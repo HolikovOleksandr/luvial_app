@@ -69,9 +69,37 @@ class RegisterScreen extends StatelessWidget {
                 },
                 child: const Text('Register'),
               ),
-              TextButton(
-                onPressed: () => context.go(LoginScreen.route),
-                child: Text('Login'),
+              const Text('or continue with'),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      print(context.read<AuthBloc>());
+
+                      context.read<AuthBloc>().add(AuthGoogleLoginRequested());
+                    },
+                    icon: const Icon(Icons.g_mobiledata, size: 64),
+                  ),
+                  // IconButton(
+                  //   onPressed: () {
+                  //     context.read<AuthBloc>().add(AuthAppleLoginRequested());
+                  //   },
+                  //   icon: const Icon(Icons.apple),
+                  // ),
+                ],
+              ),
+              Spacer(),
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text('Already have an account?'),
+                  TextButton(
+                    onPressed: () => context.go(LoginScreen.route),
+                    child: const Text('Login'),
+                  ),
+                ],
               ),
             ],
           ),

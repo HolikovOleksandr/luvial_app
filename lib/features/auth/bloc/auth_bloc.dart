@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:luvial_app/features/auth/bloc/auth_event.dart';
 import 'package:luvial_app/features/auth/bloc/auth_state.dart';
@@ -13,6 +14,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
     on<AuthLoggedOut>((event, emit) => _onLoggedOut(emit));
     on<AuthLoginRequested>((event, emit) => _onLoginRequested(event, emit));
+    on<AuthGoogleLoginRequested>(_onGoogleSignInRequested);
   }
 
   Future<void> _onAuthStarted(Emitter<AuthState> emit) async {
@@ -35,6 +37,35 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       );
 
       emit(AuthAuthenticated(credential.user!));
+    } catch (e) {
+      emit(AuthFailure(e.toString()));
+    }
+  }
+
+  Future<void> _onGoogleSignInRequested(
+    AuthGoogleLoginRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(AuthLoading());
+
+    try {
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+      if (googleUser == null) {
+        emit(AuthUnauthenticated());
+        return;
+      }
+
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      final userCredential = await _auth.signInWithCredential(credential);
+      emit(AuthAuthenticated(userCredential.user!));
     } catch (e) {
       emit(AuthFailure(e.toString()));
     }
