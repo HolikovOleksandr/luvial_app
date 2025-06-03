@@ -4,73 +4,58 @@ import 'package:go_router/go_router.dart';
 import 'package:luvial_app/features/auth/bloc/auth_bloc.dart';
 import 'package:luvial_app/features/auth/bloc/auth_state.dart';
 import 'package:luvial_app/features/auth/screens/register_screen.dart';
+import 'package:luvial_app/features/auth/widgets/platform_signin_button.dart';
+import 'package:luvial_app/features/profile/screens/profile_screen.dart';
 
 class LoginScreen extends StatelessWidget {
-  static const String route = '/login';
   const LoginScreen({super.key});
+
+  static const String route = '/login';
 
   @override
   Widget build(BuildContext context) {
-    final emailController = TextEditingController();
-    final passwordController = TextEditingController();
-
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is AuthFailure) {
           _authFailure(context, state.message);
         } else if (state is AuthAuthenticated) {
           _authSuccess(context);
-          context.go('/home');
+          context.go(ProfileScreen.route);
         }
       },
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Login'),
-          leading: IconButton(
-            onPressed: () {
-              emailController.text = 'sanyagolikov97@email.com';
-              passwordController.text = '123123132';
-            },
-            icon: Icon(Icons.text_format_sharp),
-          ),
-        ),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              TextField(
-                controller: emailController,
-                decoration: const InputDecoration(labelText: 'Email', border: OutlineInputBorder()),
-                keyboardType: TextInputType.emailAddress,
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: passwordController,
-                decoration: const InputDecoration(
-                  labelText: 'Password',
-                  border: OutlineInputBorder(),
+      child: SafeArea(
+        child: Scaffold(
+          appBar: AppBar(title: const Text('Login')),
+          body: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const PlatformSignInButtons(),
+                const Spacer(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text("Don't have an account?"),
+                    TextButton(
+                      onPressed: () => context.go(RegisterScreen.route),
+                      child: const Text('Register'),
+                    ),
+                  ],
                 ),
-                obscureText: true,
-              ),
-              const SizedBox(height: 24),
-              Spacer(),
-              TextButton(
-                onPressed: () => context.go(RegisterScreen.route),
-                child: Text('Create Account'),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  _authFailure(BuildContext context, String message) {
+  void _authFailure(BuildContext context, String message) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
   }
 
-  _authSuccess(BuildContext context) {
+  void _authSuccess(BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Login successful!')));
   }
 }

@@ -26,7 +26,9 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) => BlocListener<AuthBloc, AuthState>(
     listener: (context, state) => _authListener(context, state),
-    child: const Scaffold(body: Center(child: Text('Splash Screen'))),
+    child: SafeArea(
+      child: const Scaffold(body: Center(child: Text('Splash Screen'))),
+    ),
   );
 
   _authListener(BuildContext context, AuthState state) {
@@ -35,9 +37,7 @@ class _SplashScreenState extends State<SplashScreen> {
     } else if (state is AuthUnauthenticated) {
       context.go('/register');
     } else if (state is AuthFailure) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(state.message)));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
     }
   }
 }
