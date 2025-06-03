@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:luvial_app/features/auth/bloc/auth_bloc.dart';
-import 'package:luvial_app/features/auth/bloc/auth_event.dart';
 import 'package:luvial_app/features/auth/bloc/auth_state.dart';
 import 'package:luvial_app/features/auth/screens/register_screen.dart';
 
@@ -42,10 +41,7 @@ class LoginScreen extends StatelessWidget {
             children: [
               TextField(
                 controller: emailController,
-                decoration: const InputDecoration(
-                  labelText: 'Email',
-                  border: OutlineInputBorder(),
-                ),
+                decoration: const InputDecoration(labelText: 'Email', border: OutlineInputBorder()),
                 keyboardType: TextInputType.emailAddress,
               ),
               const SizedBox(height: 16),
@@ -58,17 +54,6 @@ class LoginScreen extends StatelessWidget {
                 obscureText: true,
               ),
               const SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: () {
-                  final email = emailController.text.trim();
-                  final password = passwordController.text.trim();
-
-                  context.read<AuthBloc>().add(
-                    AuthLoginRequested(email, password),
-                  );
-                },
-                child: const Text('Login'),
-              ),
               Spacer(),
               TextButton(
                 onPressed: () => context.go(RegisterScreen.route),
@@ -82,14 +67,10 @@ class LoginScreen extends StatelessWidget {
   }
 
   _authFailure(BuildContext context, String message) {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(message)));
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
   }
 
   _authSuccess(BuildContext context) {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Login successful!')));
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Login successful!')));
   }
 }

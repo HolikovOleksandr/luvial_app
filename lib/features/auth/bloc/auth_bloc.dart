@@ -1,45 +1,26 @@
-import 'package:bloc/bloc.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:luvial_app/features/auth/bloc/auth_event.dart';
-import 'package:luvial_app/features/auth/bloc/auth_state.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+
+import 'auth_event.dart';
+import 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   AuthBloc() : super(AuthInitial()) {
-    on<AuthStarted>((event, emit) => _onAuthStarted(emit));
-    on<AuthRegisterRequested>(
-      (event, emit) => _onRegisterRequested(event, emit),
-    );
-    on<AuthLoggedOut>((event, emit) => _onLoggedOut(emit));
-    on<AuthLoginRequested>((event, emit) => _onLoginRequested(event, emit));
+    on<AuthStarted>(_onAuthStarted);
     on<AuthGoogleLoginRequested>(_onGoogleSignInRequested);
+    on<AuthAppleLoginRequested>(_onAppleLoginRequested);
+    on<AuthLoggedOut>(_onLoggedOut);
   }
 
-  Future<void> _onAuthStarted(Emitter<AuthState> emit) async {
+  Future<void> _onAuthStarted(AuthStarted event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
 
     final user = _auth.currentUser;
     user != null ? emit(AuthAuthenticated(user)) : emit(AuthUnauthenticated());
-  }
-
-  Future<void> _onRegisterRequested(
-    AuthRegisterRequested event,
-    Emitter<AuthState> emit,
-  ) async {
-    emit(AuthLoading());
-
-    try {
-      final credential = await _auth.createUserWithEmailAndPassword(
-        email: event.email,
-        password: event.password,
-      );
-
-      emit(AuthAuthenticated(credential.user!));
-    } catch (e) {
-      emit(AuthFailure(e.toString()));
-    }
   }
 
   Future<void> _onGoogleSignInRequested(
@@ -56,8 +37,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         return;
       }
 
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
 
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
@@ -71,25 +51,34 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
-  Future<void> _onLoginRequested(
-    AuthLoginRequested event,
+  Future<void> _onAppleLoginRequested(
+    AuthAppleLoginRequested event,
     Emitter<AuthState> emit,
   ) async {
-    emit(AuthLoading());
-
     try {
-      final credential = await _auth.signInWithEmailAndPassword(
-        email: event.email,
-        password: event.password,
+      emit(AuthLoading());
+
+      final appleCredential = await SignInWithApple.getAppleIDCredential(
+        scopes: [AppleIDAuthorizationScopes.email, AppleIDAuthorizationScopes.fullName],
       );
 
-      emit(AuthAuthenticated(credential.user!));
+      final oauthCredential = OAuthProvider("apple.com").credential(
+        idToken: appleCredential.identityToken,
+        accessToken: appleCredential.authorizationCode,
+      );
+
+      final userCredential = await _auth.signInWithCredential(oauthCredential);
+      final user = userCredential.user;
+
+      user != null
+          ? emit(AuthAuthenticated(user))
+          : emit(AuthFailure("Apple Sign-In failed: no user"));
     } catch (e) {
       emit(AuthFailure(e.toString()));
     }
   }
 
-  Future<void> _onLoggedOut(Emitter<AuthState> emit) async {
+  Future<void> _onLoggedOut(AuthLoggedOut event, Emitter<AuthState> emit) async {
     await _auth.signOut();
     emit(AuthUnauthenticated());
   }

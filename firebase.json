@@ -1,1 +1,25 @@
-{"flutter":{"platforms":{"ios":{"default":{"projectId":"luvial","appId":"1:712580544248:ios:d11dfdff1e71901998ed0d","uploadDebugSymbols":false,"fileOutput":"ios/Runner/GoogleService-Info.plist"}},"macos":{"default":{"projectId":"luvial","appId":"1:712580544248:ios:d11dfdff1e71901998ed0d","uploadDebugSymbols":false,"fileOutput":"macos/Runner/GoogleService-Info.plist"}},"dart":{"lib/firebase_options.dart":{"projectId":"luvial","configurations":{"ios":"1:712580544248:ios:d11dfdff1e71901998ed0d","macos":"1:712580544248:ios:d11dfdff1e71901998ed0d"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "luvial",
+          "appId": "1:712580544248:android:4577ca0d8358a57698ed0d",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "luvial",
+          "configurations": {
+            "android": "1:712580544248:android:4577ca0d8358a57698ed0d",
+            "ios": "1:712580544248:ios:d11dfdff1e71901998ed0d",
+            "macos": "1:712580544248:ios:d11dfdff1e71901998ed0d",
+            "web": "1:712580544248:web:f179dba68122cca598ed0d",
+            "windows": "1:712580544248:web:177a971cc7432f8798ed0d"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,3 +1,4 @@
+import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -12,9 +13,6 @@ class RegisterScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final emailController = TextEditingController();
-    final passwordController = TextEditingController();
-
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is AuthFailure) {
@@ -25,71 +23,16 @@ class RegisterScreen extends StatelessWidget {
         }
       },
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Register'),
-          leading: IconButton(
-            onPressed: () {
-              emailController.text = 'sanyagolikov97@email.com';
-              passwordController.text = '123123132';
-            },
-            icon: Icon(Icons.text_format_sharp),
-          ),
-        ),
+        appBar: AppBar(title: const Text('Register')),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              TextField(
-                controller: emailController,
-                decoration: const InputDecoration(
-                  labelText: 'Email',
-                  border: OutlineInputBorder(),
-                ),
-                keyboardType: TextInputType.emailAddress,
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: passwordController,
-                decoration: const InputDecoration(
-                  labelText: 'Password',
-                  border: OutlineInputBorder(),
-                ),
-                obscureText: true,
-              ),
-              const SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: () {
-                  final email = emailController.text;
-                  final password = passwordController.text;
+              // Ось тут виводимо кнопки залежно від платформи
+              _PlatformSignInButtons(),
 
-                  context.read<AuthBloc>().add(
-                    AuthRegisterRequested(email, password),
-                  );
-                },
-                child: const Text('Register'),
-              ),
-              const Text('or continue with'),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  IconButton(
-                    onPressed: () {
-                      print(context.read<AuthBloc>());
-
-                      context.read<AuthBloc>().add(AuthGoogleLoginRequested());
-                    },
-                    icon: const Icon(Icons.g_mobiledata, size: 64),
-                  ),
-                  // IconButton(
-                  //   onPressed: () {
-                  //     context.read<AuthBloc>().add(AuthAppleLoginRequested());
-                  //   },
-                  //   icon: const Icon(Icons.apple),
-                  // ),
-                ],
-              ),
-              Spacer(),
+              const Spacer(),
 
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -108,15 +51,49 @@ class RegisterScreen extends StatelessWidget {
     );
   }
 
-  _authFailure(BuildContext context, String message) {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(message)));
+  void _authFailure(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
   }
 
-  _authSuccess(BuildContext context) {
+  void _authSuccess(BuildContext context) {
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(const SnackBar(content: Text('Registration successful!')));
+  }
+}
+
+class _PlatformSignInButtons extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final authBloc = context.read<AuthBloc>();
+    List<Widget> buttons = [];
+
+    if (Platform.isAndroid) {
+      buttons.add(
+        IconButton(
+          onPressed: () => authBloc.add(AuthGoogleLoginRequested()),
+          icon: const Icon(Icons.g_mobiledata, size: 64),
+          tooltip: 'Sign in with Google',
+        ),
+      );
+    }
+
+    if (Platform.isIOS) {
+      // Покажемо обидві кнопки на iOS — Google і Apple
+      buttons.addAll([
+        IconButton(
+          onPressed: () => authBloc.add(AuthGoogleLoginRequested()),
+          icon: const Icon(Icons.g_mobiledata, size: 64),
+          tooltip: 'Sign in with Google',
+        ),
+        IconButton(
+          onPressed: () => authBloc.add(AuthAppleLoginRequested()),
+          icon: const Icon(Icons.apple, size: 64),
+          tooltip: 'Sign in with Apple',
+        ),
+      ]);
+    }
+
+    return Row(mainAxisAlignment: MainAxisAlignment.center, children: buttons);
   }
 }

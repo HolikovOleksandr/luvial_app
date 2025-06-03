@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "712580544248",
+    "project_id": "luvial",
+    "storage_bucket": "luvial.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:712580544248:android:4577ca0d8358a57698ed0d",
+        "android_client_info": {
+          "package_name": "com.example.luvial_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "712580544248-7lm9phkbum116ndakas018oscj89g4e0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyARvKCVq3kzQ21w7TDP4Juskbax6HQtAnA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "712580544248-7lm9phkbum116ndakas018oscj89g4e0.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "712580544248-qc8k3hc4ba3oj11sqsqs9pmke92ohnc0.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.luvialApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
