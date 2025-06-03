@@ -19,3 +19,10 @@ final class AuthFailure extends AuthState {
   final String message;
   AuthFailure(this.message);
 }
+
+// class AuthCodeSent extends AuthState {
+//   final String verificationId;
+//   AuthCodeSent(this.verificationId);
+// }
+
+class AuthLoggedOut extends AuthState {}

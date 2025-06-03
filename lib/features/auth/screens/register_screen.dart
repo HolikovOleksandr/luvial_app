@@ -1,15 +1,15 @@
-import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:luvial_app/features/auth/bloc/auth_bloc.dart';
-import 'package:luvial_app/features/auth/bloc/auth_event.dart';
 import 'package:luvial_app/features/auth/bloc/auth_state.dart';
 import 'package:luvial_app/features/auth/screens/login_screen.dart';
+import 'package:luvial_app/features/auth/widgets/platform_signin_button.dart';
 
 class RegisterScreen extends StatelessWidget {
-  static const String route = '/register';
   const RegisterScreen({super.key});
+
+  static const String route = '/register';
 
   @override
   Widget build(BuildContext context) {
@@ -29,11 +29,8 @@ class RegisterScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Ось тут виводимо кнопки залежно від платформи
-              _PlatformSignInButtons(),
-
+              const PlatformSignInButtons(),
               const Spacer(),
-
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -59,41 +56,5 @@ class RegisterScreen extends StatelessWidget {
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(const SnackBar(content: Text('Registration successful!')));
-  }
-}
-
-class _PlatformSignInButtons extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final authBloc = context.read<AuthBloc>();
-    List<Widget> buttons = [];
-
-    if (Platform.isAndroid) {
-      buttons.add(
-        IconButton(
-          onPressed: () => authBloc.add(AuthGoogleLoginRequested()),
-          icon: const Icon(Icons.g_mobiledata, size: 64),
-          tooltip: 'Sign in with Google',
-        ),
-      );
-    }
-
-    if (Platform.isIOS) {
-      // Покажемо обидві кнопки на iOS — Google і Apple
-      buttons.addAll([
-        IconButton(
-          onPressed: () => authBloc.add(AuthGoogleLoginRequested()),
-          icon: const Icon(Icons.g_mobiledata, size: 64),
-          tooltip: 'Sign in with Google',
-        ),
-        IconButton(
-          onPressed: () => authBloc.add(AuthAppleLoginRequested()),
-          icon: const Icon(Icons.apple, size: 64),
-          tooltip: 'Sign in with Apple',
-        ),
-      ]);
-    }
-
-    return Row(mainAxisAlignment: MainAxisAlignment.center, children: buttons);
   }
 }

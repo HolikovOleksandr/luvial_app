@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:luvial_app/features/auth/bloc/auth_bloc.dart';
 import 'package:luvial_app/features/auth/bloc/auth_event.dart';
-import 'package:luvial_app/features/auth/bloc/auth_state.dart';
+import 'package:luvial_app/features/auth/bloc/auth_state.dart' hide AuthLoggedOut;
 import 'package:luvial_app/features/auth/screens/register_screen.dart';
 
 class HomeScreen extends StatelessWidget {
