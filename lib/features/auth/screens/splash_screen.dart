@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:luvial_app/features/auth/bloc/auth_bloc.dart';
 import 'package:luvial_app/features/auth/bloc/auth_event.dart';
 import 'package:luvial_app/features/auth/bloc/auth_state.dart';
+import 'package:luvial_app/features/auth/screens/register_screen.dart';
+import 'package:luvial_app/features/profile/screens/profile_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   static const String route = '/splash';
@@ -17,7 +19,11 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 2), () {
+    _authCheck();
+  }
+
+  Future<Null> _authCheck() {
+    return Future.delayed(const Duration(seconds: 2), () {
       if (!mounted) return;
       context.read<AuthBloc>().add(AuthStarted());
     });
@@ -33,9 +39,9 @@ class _SplashScreenState extends State<SplashScreen> {
 
   _authListener(BuildContext context, AuthState state) {
     if (state is AuthAuthenticated) {
-      context.go('/home');
+      context.go(ProfileScreen.route);
     } else if (state is AuthUnauthenticated) {
-      context.go('/register');
+      context.go(RegisterScreen.route);
     } else if (state is AuthFailure) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
     }
